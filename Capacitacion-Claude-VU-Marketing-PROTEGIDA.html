@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Capacitación Claude VU - Acceso Protegido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'DM Sans', Roboto, sans-serif;
+            background: linear-gradient(135deg, #161618 0%, #26272B 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+        .login-box {
+            background: #1C1D1E;
+            border-radius: 12px;
+            border: 1px solid rgba(241, 94, 55, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .header {
+            text-align: center;
+        }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: #F15E37;
+            border-radius: 12px;
+            color: #161618;
+            font-weight: 900;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #FCFCFA;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #D9D9D4;
+            font-size: 14px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #FCFCFA;
+            font-size: 14px;
+        }
+        .form-group input {
+            padding: 12px 16px;
+            background: #26272B;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #FCFCFA;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #F15E37;
+            box-shadow: 0 0 0 3px rgba(241, 94, 55, 0.15);
+            background: rgba(241, 94, 55, 0.05);
+        }
+        .form-group input::placeholder {
+            color: #6D7378;
+        }
+        button {
+            padding: 12px 16px;
+            background: #F15E37;
+            color: #161618;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #E04A24;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .error {
+            color: #FF6B6B;
+            font-size: 14px;
+            padding: 12px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+        .document-container {
+            display: none;
+            background: #1C1D1E;
+            min-height: 100vh;
+            padding: 40px;
+            position: relative;
+        }
+        .document-container.visible {
+            display: block;
+        }
+        .document-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #161618;
+            border: 1px solid rgba(241, 94, 55, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .logout-bar {
+            background: rgba(241, 94, 55, 0.1);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(241, 94, 55, 0.1);
+        }
+        .logout-bar p {
+            color: #D9D9D4;
+            font-size: 13px;
+            margin: 0;
+        }
+        .logout-bar button {
+            background: transparent;
+            color: #F15E37;
+            border: 1px solid #F15E37;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+        .logout-bar button:hover {
+            background: #F15E37;
+            color: #161618;
+        }
+        .warning-banner {
+            background: rgba(241, 94, 55, 0.08);
+            border-bottom: 1px solid rgba(241, 94, 55, 0.2);
+            padding: 12px 20px;
+            color: #D9D9D4;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LOGIN FORM -->
+        <div class="login-box" id="loginBox">
+            <div class="header">
+                <div class="logo">VU</div>
+                <h1>🔒 Capacitación Claude VU</h1>
+                <p>Acceso protegido · Ingresa tu contraseña</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="Contraseña VU" required autofocus>
+                </div>
+                <div class="error" id="errorMsg"></div>
+                <button type="submit">🔓 Desbloquear Capacitación</button>
+            </form>
+            <p style="font-size: 12px; color: #6D7378; text-align: center; margin-top: 12px;">
+                Documento protegido con AES-256 · Solo usuarios autorizados
+            </p>
+        </div>
+
+        <!-- DOCUMENT VIEWER -->
+        <div class="document-container" id="documentContainer">
+            <div class="document-inner">
+                <div class="logout-bar">
+                    <p>📄 Capacitación Claude VU · Marketing</p>
+                    <button onclick="logout()">🔒 Cerrar Sesión</button>
+                </div>
+                <div class="warning-banner">
+                    ⚠️ Contenido confidencial de VU Security. No compartir. Documento encriptado.
+                </div>
+                <div id="documentContent" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CryptoJS Library via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script>
+        // CONTENIDO ENCRIPTADO
+        const ENCRYPTED_CONTENT = "EOF
+echo "$ENCRYPTED"
+cat >> /home/claude/Capacitacion-Claude-VU-Marketing-PROTEGIDA.html << 'EOF2'
+";
+
+        // Función para desencriptar
+        function decryptContent(encryptedData, password) {
+            try {
+                // Extraer salt e iv (formato: Salted__[16 bytes salt][16 bytes iv][data])
+                const saltHex = encryptedData.substring(8, 8 + 32);
+                const ivHex = encryptedData.substring(8 + 32, 8 + 32 + 32);
+                const encrypted = encryptedData.substring(8 + 32 + 32);
+                
+                const salt = CryptoJS.enc.Hex.parse(saltHex);
+                const iv = CryptoJS.enc.Hex.parse(ivHex);
+                
+                // Derivar clave con PBKDF2 (100000 iteraciones, 32 bytes, SHA256)
+                const key = CryptoJS.PBKDF2(password, salt, {
+                    keySize: 256/32,
+                    iterations: 100000,
+                    hasher: CryptoJS.algo.SHA256
+                });
+                
+                // Desencriptar
+                const decrypted = CryptoJS.AES.decrypt(
+                    { ciphertext: CryptoJS.enc.Hex.parse(encrypted) },
+                    key,
+                    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+                );
+                
+                const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+                
+                if (!plaintext || plaintext.length < 100) {
+                    throw new Error('Desencriptación fallida');
+                }
+                
+                return plaintext;
+            } catch (error) {
+                console.error('Decrypt error:', error);
+                throw new Error('Contraseña incorrecta');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const loginBox = document.getElementById('loginBox');
+            const documentContainer = document.getElementById('documentContainer');
+
+            try {
+                const decryptedHTML = decryptContent(ENCRYPTED_CONTENT, password);
+                
+                // Inyectar el contenido desencriptado
+                document.getElementById('documentContent').innerHTML = decryptedHTML;
+                
+                // Mostrar documento, ocultar login
+                loginBox.style.display = 'none';
+                documentContainer.classList.add('visible');
+                
+                // Guardar en sessionStorage (se elimina al cerrar la pestaña)
+                sessionStorage.setItem('docPassword', password);
+                sessionStorage.setItem('docUnlocked', 'true');
+                
+                document.getElementById('password').value = '';
+            } catch (error) {
+                errorMsg.textContent = '❌ ' + error.message;
+                errorMsg.classList.add('show');
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('docPassword');
+            sessionStorage.removeItem('docUnlocked');
+            document.getElementById('loginBox').style.display = 'flex';
+            document.getElementById('documentContainer').classList.remove('visible');
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+
+        // Verificar si hay sesión activa
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('docUnlocked') === 'true') {
+                const savedPassword = sessionStorage.getItem('docPassword');
+                if (savedPassword) {
+                    try {
+                        const decryptedHTML = decryptContent(ENCRYPTED_CONTENT, savedPassword);
+                        document.getElementById('documentContent').innerHTML = decryptedHTML;
+                        document.getElementById('loginBox').style.display = 'none';
+                        document.getElementById('documentContainer').classList.add('visible');
+                    } catch (error) {
+                        logout();
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
+EOF2
